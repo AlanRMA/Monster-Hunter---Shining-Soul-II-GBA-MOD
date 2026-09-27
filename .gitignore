@@ -1,2 +1,6 @@
 savestates/
 savestates/
+.DS_Store
+*.gba
+*.sav
+savestates/
