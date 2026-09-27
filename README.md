@@ -1,3 +1,4 @@
+![IdeiaDeBackground](/Theme.jpeg)
 # Shining Soul II — Registro de modding
 
 Atualizado em: 27/09/2026.
