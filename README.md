@@ -1,17 +1,100 @@
 # Shining Soul II — Registro de modding
 
-Atualizado em: 26/09/2026.
+Atualizado em: 27/09/2026.
 
-Objetivo: estudar Shining Soul II para criar um mod inspirado em Monster Hunter, começando pela reutilização de uma sala de boss como arena.
+Objetivo central: transformar os modos Single Player e Multiplayer em um mod de arenas inspirado em Monster Hunter, substituindo o fluxo da campanha original. O MVP implementa primeiro a arena em Single Player; Multiplayer será adaptado depois sobre a mesma proposta.
+
+## Ponto de parada — 27/09/2026
+
+- A ROM de desenvolvimento conserva o novo título `Monster Hunter Souls Arena`, o menu original funcional e o redirecionamento após a criação/carregamento do personagem para o contexto `1`, sala `7` (arena do chefe do Forte dos Goblins).
+- O fluxo de criação preserva o nome e a cor escolhidos para Eric. A restrição da seleção apenas a Eric ainda é uma tarefa pendente.
+- Solução temporária aceita para a primeira cutscene: o livro começa a aparecer e um `Start` automático o pula. O jogador não precisa apertar o botão. O livro ainda pode ser visto brevemente; por decisão de projeto, mantemos esse comportamento por enquanto.
+- O patch foi validado na ROM isolada `Shining Soul II - Book Ready Skip Test.gba` e aplicado à ROM de desenvolvimento por `tools/apply_book_ready_skip.py`. O backup anterior é `Shining Soul II - Monster Hunter Mod Dev.before-book-ready-skip.gba`. Os arquivos `.gba` e `.sav` ficam locais e não entram no Git.
+- SHA-256 da base anterior: `58ba15896e9decf7575fd70c70a14279a349884a5d4542ffd2a27ffc79db5025`. SHA-256 da ROM de desenvolvimento com o skip: `10b66522c3ba89f1830b437c3e8ef5b8bedae12fbe50623ed6a0d773caa2e8e3`.
+- A ponte `bridge.lua` usa `json.lua` na mesma pasta e atende o MCP do mGBA em `127.0.0.1:8765`. No mGBA 0.10.5 desta máquina, leitura/escrita de memória, botões, screenshots e save states funcionam; `pause`, `unpause` e `frameAdvance` não estão disponíveis.
+
+### O que o skip confirmou
+
+- A rotina de confirmação do personagem chega à cutscene com os endereços `0300296C = 08002CF9` e `030029B8 = 030065A0` quando a cena está inicializada. O patch combina os dois marcadores no manipulador de entrada em `0800077C` e injeta `Start` somente nessa situação.
+- Usar só o callback `03000010 = 08006225` ou o estado `0300135C` atingia também a seleção do personagem. Simular `Start` antes de a cena estar pronta causou tela branca ou livro corrompido. Alterar `0300001C` como contador também corrompeu a imagem.
+- Pular diretamente da preparação inicial para a saída da cutscene voltou ao título. Um salto posterior, antes da espera em `08002CF4`, alcançou o diálogo do chefe sem mostrar o livro, mas deixou os gráficos da arena corrompidos. Portanto, não usar esses saltos na ROM de desenvolvimento: a espera original executa uma preparação necessária.
+- Nos checkpoints, o livro ficou visível aproximadamente entre os quadros `2795` e `2925`; o `Start` automático já era enviado, mas o jogo só concluía o skip após sua própria animação. Essa é a razão de ainda aparecer brevemente.
+
+### Próximos passos
+
+1. Em uma partida nova e em um save existente, confirmar o caminho `Single Player -> Eric (nome/cor) -> livro breve -> arena 1/7`, com câmera, colisão, entidades, sprite do chefe e save corretos. Não tratar a simples chegada ao diálogo como validação completa do combate.
+2. Restringir a escolha de classe ao Eric sem perder edição de nome e cores.
+3. Identificar e entregar as três armas iniciais, três ervas de cura e a erva no atalho `R`.
+4. Remover o diálogo do chefe quando o fluxo de combate estiver estável. Investigar depois um bypass real da cutscene que preserve a preparação gráfica; o skip artificial atual é o ponto de retorno seguro.
+5. Substituir sprite, retrato e animações do chefe por um monstro do mod. Manter `STR = 500` e restaurar HP para `45` durante testes; balancear os atributos de Eric por último.
+
+## MVP — fluxo central
+
+O MVP deve funcionar como uma experiência curta e completa:
+
+```text
+Menu -> SINGLE PLAYER MODE -> Eric preparado -> boss da fase 1 -> combate
+```
+
+Critérios do MVP:
+
+- Manter `SINGLE PLAYER MODE` e `MULTIPLAYER MODE` como os dois modos principais do mod, sem preservar o acesso normal à campanha original.
+- No primeiro MVP, ao selecionar Single Player, permitir escolher/criar um arquivo de save e iniciar o fluxo de arena com Eric.
+- Limitar a seleção de personagem ao Eric, inicialmente sem disponibilizar as outras classes.
+- Preservar a seleção de cores do Eric e permitir que o jogador altere o nome.
+- Colocar as três armas iniciais no inventário de Eric. Os itens e IDs exatos ainda precisam ser confirmados antes do patch definitivo.
+- Colocar três ervas de cura no inventário e configurar a erva no atalho do botão R.
+- Ir diretamente para a tela/sala do boss da fase 1, sem percorrer a campanha.
+- Preferencialmente pular o texto introdutório do chefe para chegar imediatamente ao combate. Isso é desejável, mas não deve bloquear a primeira versão jogável se exigir uma alteração separada.
+- Solução temporária atual: injetar `Start` pela rotina de entrada somente quando a cena do livro atinge os dois marcadores confirmados. Isso funciona, mas o livro aparece por um instante antes do skip.
+- Experimento isolado `Intro Skip Test`: iniciar a máquina da abertura diretamente no estado `7` não pula para o fim; esse estado abre o fluxo de dados suspensos (`Continue from suspend data` / `Restart dungeon`). Não aplicar esse byte à ROM principal.
+- Experimento isolado `Ready Intro Skip Test`: combinar a rotina `08006225` com o valor observado em `0300135C` também dispara durante a seleção do personagem e impede selecionar Eric. Esses marcadores, usados sozinhos, não identificam exclusivamente o livro.
+- Definir os atributos e demais números de Eric somente no final, após o fluxo estar estável, para ajustar a dificuldade por testes de combate.
+
+Ordem de implementação recomendada:
+
+1. Confirmar e reproduzir com segurança o carregamento da sala do boss da fase 1.
+2. Preservar seleção/criação de save e limitar a criação de personagem ao Eric, mantendo nome e cores.
+3. Redirecionar a confirmação final do personagem para o novo fluxo de arena.
+4. Inicializar Eric, as três armas, as três ervas e o atalho R.
+5. Remover ou contornar a introdução da campanha e o texto do chefe.
+6. Balancear os atributos de Eric e a dificuldade.
+
+Destino confirmado para o MVP: contexto/fase interna `1`, sala `7`, correspondente à arena do boss do Forte dos Goblins. O fluxo final não deve carregar a entrada nem percorrer as salas normais da fase 1. Após a confirmação final de Eric (save existente ou criação com nome/cor), o jogo deve chamar diretamente o carregamento de `(1, 7)`.
+
+Limitação confirmada do salto durante gameplay: forçar o carregador e o descritor de `sala 0` para `sala 7` carrega corretamente mapa, câmera e colisão da arena, mas mantém entidades/sprites da sala anterior; apareceram baús e um inimigo imóvel no lugar do boss. Portanto o patch definitivo não deve reutilizar uma transição de porta com entidades já ativas. O redirecionamento precisa ocorrer antes da criação das entidades, no fluxo de confirmação/carregamento do personagem, ou chamar explicitamente a inicialização completa da sala.
+
+Fora do MVP inicial: implementação funcional do Multiplayer de arena, múltiplos bosses, progressão longa, crafting, seleção ampla de equipamentos e balanceamento definitivo de classes.
+
+Direção visual posterior ao MVP: substituir o chefe provisório por um monstro inspirado em Monster Hunter. A troca deve abranger o sprite de combate, o retrato/profile picture usado no diálogo e o spritesheet completo de animações, preservando primeiro a lógica funcional do chefe original.
+
+## Tela de título — arte definida
+
+- Background oficial escolhido: arte `Monster Hunter — Souls Arena`, com ruínas verdes, o caçador, dois monstros e o pequeno companheiro.
+- Prévia reduzida em resolução GBA: `title-preview.png`. A imagem `Theme.jpeg` exibida no topo do README é uma arte de referência separada.
+- A arte deve substituir o background original da tela de título, preservando as opções `SINGLE PLAYER MODE` e `MULTIPLAYER MODE` do jogo.
+- Foi preparada uma versão simplificada em pixel art e duas prévias em resolução nativa do GBA (`240x160`), com 256 e 64 cores. A versão de 64 cores manteve boa legibilidade e é a candidata inicial para conversão.
+- Antes de aplicar o patch, ainda é necessário extrair a tela de título original para confirmar sua organização em camadas, tiles, tilemap e paletas. A integração definitiva deve reservar contraste suficiente para o menu existente.
+- Os arquivos de trabalho estão em `outputs/title-background-source.png`, `outputs/title-background-simplified-master.png`, `outputs/title-background-gba-256-colors.png` e `outputs/title-background-gba-64-colors.png` no workspace desta exploração.
+- Estrutura confirmada no visualizador de mapas do mGBA: imagem no `Background 1`, tilemap em `0600E800`, tiles em `06000000`, mapa lógico `256x256` e área visível `240x160`.
+- Foi gerada também `outputs/title-background-original-palette-4bpp.png`, usando somente a paleta original e limitando cada tile de `8x8` a um único banco de 16 cores. Esta é a primeira prévia compatível com a estrutura gráfica observada; ainda falta convertê-la em tiles/tilemap e localizar o pacote comprimido correspondente na ROM.
+- Patch da tela de título aplicado e validado na ROM de desenvolvimento. Tiles 4bpp: offset de arquivo `005E4B9C`, 19.232 bytes usados de uma área observada de 20.480 bytes. Tilemap LZ77: offset `00589784`, 1.593 bytes usados antes do próximo recurso em `00589F50`.
+- SHA-256 da ROM de desenvolvimento após o patch do título: `f6968d2adc9020b864b54c9ad8b1adf21296b1b64c277b4529da701bc61d5b6b`.
+- Backup limpo anterior ao patch: `Shining Soul II - Monster Hunter Mod Dev.before-title.gba`, com o mesmo SHA-256 da ROM original.
+- Validação no mGBA: background, logotipo, `PRESS START`, cursor e as opções `SINGLE PLAYER MODE` / `MULTIPLAYER MODE` funcionam. O menu permanece legível, embora sobreponha o caçador central; reposicionamento fica como acabamento opcional.
+- A arte nova também foi aplicada às ROMs experimentais `Force Room 7 Test` e `Force Room 7 Full Test`, preservando os patches de código específicos de cada uma.
 
 ## Ambiente e critérios de confirmação
 
 - Jogo: Shining Soul II (USA).
 - Emulador observado: mGBA 0.10.5, macOS.
-- Hash e revisão exata da ROM: ainda não registrados.
+- ROM original: `Shining Soul II (USA).gba`; SHA-256 `b31c19d2d25683a0941d5d501912b5f21d4590cd7071fa01882e62aa5227a7c9`.
+- ROM de desenvolvimento: `Shining Soul II - Monster Hunter Mod Dev.gba`; criada como cópia byte a byte com o mesmo hash inicial.
+- Regra de trabalho: não modificar a ROM original. Todo patch permanente deve ser aplicado primeiro à ROM de desenvolvimento, mantendo backup ou script reproduzível.
 - Os endereços abaixo foram observados nesta sessão. Sua estabilidade após reiniciar, carregar outro personagem ou trocar de classe ainda precisa ser testada.
 - “Confirmado” significa observado nos testes ou diretamente demonstrado pelo código lido. Hipóteses estão identificadas.
 - Endereços de RAM e VRAM não são offsets de arquivo da ROM. Alterações temporárias não constituem um patch permanente.
+- Durante exploração e testes de passagem, manter `STR = 500` em `02003C2C` para reduzir o tempo de combate. Esse valor não pertence ao balanceamento final.
 
 ## Status — base de trabalho: 500
 
@@ -86,7 +169,7 @@ w/1 $02003C6C 7
 - XP: `02003C38` e `03003E50` acompanharam a mudança de 264 para 312.
 - Foi proposto `w/2 $02003C38 1000`; capturas posteriores mostram nível 4 e EXP 1020, mas não houve registro controlado que confirme sozinho a origem principal e a persistência.
 - O tamanho total do campo de XP ainda é desconhecido. Uma busca de 2 bytes pode encontrar só a parte baixa de um campo maior.
-- HP: `0200B260` e `03003ED0` foram candidatos quando o HP era 8. A origem principal não foi confirmada; não tratá-los como mapa definitivo de HP.
+- HP atual: `0200B260` e `03003ED0` foram confirmados como espelhos ativos no teste da sala 6. Escrever `45` nos dois campos atualizou a interface para `45/45`. Durante a exploração, restaurar ambos antes de cada transição importante; a origem principal entre os dois ainda pode depender da etapa do frame.
 
 ## Arena do boss — camadas gráficas
 
@@ -371,6 +454,89 @@ Os valores não são ponteiros diretos para a ROM. `08006E34` preserva o argumen
 A função `08006E34` termina em `08006E3E`; `08006E40` é o literal e `08006E44` inicia outra função. Não usar a rotina posterior como continuação do resolvedor.
 
 Próxima leitura: `disassemble/t $08006A5C 64`. Objetivo: obter a fórmula de resolução e então ler somente as entradas de tabela necessárias para o recurso da arena `0002000D`.
+
+### Leitura dos mapas via MCP do mGBA — 2026-09-26
+
+O MCP `mcp-mgba` foi conectado ao mGBA 0.10.5 por `bridge.lua`, escutando em `127.0.0.1:8765`. A ROM foi identificada como `SHININGSOUL2`, código `AGB-AU2E`. Nesta versão estão disponíveis leitura/escrita de memória, entrada de botões, screenshot e save states; `pause`, `unpause` e `frameAdvance` não estão disponíveis.
+
+Estado observado na área externa com cercas e fonte:
+
+- A estrutura de BG3 em `030032D8` continuou contendo o ponteiro `0200B440`, largura `003C` (60), altura `0028` (40), camada `0003` e controle final `0001`.
+- `BG3CNT = 1F03`: prioridade 3, char base 0, screen base 31 e tilemap físico de 32x32 em `0600F800`.
+- Os 2048 bytes de `0202C460` coincidiram exatamente com os 2048 bytes enviados a `0600F800` no estado observado.
+- `0202C460` é um tilemap circular de 32x32 produzido a partir do mapa maior apontado por `0200B440`.
+- Após mover para cima, as 32 linhas físicas corresponderam exatamente à janela mundial `x=6..37`, `y=0..31`.
+- Após mover para baixo, as 32 linhas físicas corresponderam exatamente à janela mundial `x=6..37`, `y=7..38`.
+- A posição física obedece ao anel: `x_fisico = x_mundo mod 32` e `y_fisico = y_mundo mod 32`. Exemplo confirmado: na linha física 0, posições 0..5 receberam `x=32..37` e posições 6..31 receberam `x=6..31`.
+- As linhas mundiais 0..38 foram verificadas contra a origem; a linha 39 ainda não entrou na janela durante este teste.
+- A sequência inicial do mapa e a combinação de dimensões/cabeçalho não foram encontradas cruas na ROM. Isso sustenta que o recurso passa pelo resolvedor e por descompressão ou transformação antes de chegar a `0200B440`; ainda não identifica o formato.
+- Leituras dos registradores de scroll `04000010..0400001E` pelo bridge retornaram repetidamente `30B8` para todos os BGs e não foram consideradas confiáveis. Usar comparação dos tilemaps e debugger nativo para confirmar scroll.
+
+Checkpoint criado antes do teste de movimento: `outputs/map-baseline.ss0` na pasta desta conversa do Codex. Screenshots: `current-map.png`, `map-after-up.png` e `map-after-down.png`.
+
+Próximo alvo recomendado: continuar o caminho do código de recurso da sala (`0002000D` para a arena) por `08006A5C`, identificar o bloco comprimido na ROM e correlacionar sua saída com o cabeçalho/dados em `0200B430`/`0200B440`.
+
+### Recurso da arena resolvido na ROM
+
+O resolvedor em `08006A5C` foi acompanhado estaticamente para o código `0002000D`:
+
+```text
+base do resolvedor = 0856F954
+deslocamento do grupo 2 = *(0856F954 + 0x10) = 000BE448
+tabela do grupo 2 = 0862DD9C
+entrada do índice 000D = 0862DDD4
+deslocamento da entrada = 00025DE0
+recurso da arena = 08653B7C
+stream LZ77 = 08653B8C
+```
+
+Formato confirmado do recurso:
+
+- `08653B7C..08653B8B`: descritor de 16 bytes.
+- `08653B8C`: stream GBA LZ77 tipo `0x10`.
+- Cabeçalho LZ77 `10 10 4B 00`: saída descomprimida de `0x4B10` (19.216) bytes.
+- Saída = cabeçalho de `0x10` bytes + quatro planos de `60 * 40 * 2 = 0x12C0` bytes.
+- Plano 0, offset `0x0010`: RAM `0200B440`, BG3.
+- Plano 1, offset `0x12D0`: RAM `0200C700`, BG2.
+- Plano 2, offset `0x2590`: RAM `0200D9C0`, BG1.
+- Plano 3, offset `0x3850`: RAM `0200EC80`, atributos/colisão.
+- Os inícios dos quatro planos extraídos da ROM coincidiram byte por byte com a RAM.
+
+O quarto plano tem 11 valores observados: `8100`, `9000`, `9100` e `9200..9900`. A visualização forma exatamente o contorno oval da arena: `9000` domina o piso interno, `9100` o exterior, `8100` a borda e `9200..9900` aparecem em cantos/trechos inclinados. Isso confirma uma grade de atributos/colisão, embora a semântica exata de cada valor especial ainda precise de teste controlado.
+
+Limite para patch no lugar:
+
+- Próximo recurso: `08654D4C`.
+- Espaço total desta entrada: 4.560 bytes, incluindo o descritor de 16 bytes.
+- Orçamento do stream: 4.544 bytes.
+- Stream original: 4.541 bytes, apenas 3 bytes livres.
+- Recompressão ótima experimental: 4.512 bytes, round-trip validado, 32 bytes livres.
+- Estratégia padrão: tentar patch no lugar e validar o tamanho. Se uma edição ultrapassar 4.544 bytes, realocar o recurso para espaço livre e atualizar a entrada relativa em `0862DDD4`.
+
+Ferramentas locais de pesquisa na pasta desta conversa: extrator LZ77, compressor LZ77 ótimo, desassemblador Thumb e renderizador da grade de atributos. Nenhuma alteração foi aplicada à ROM original.
+
+### Menu principal — estratégia definida
+
+O menu principal exibido tem duas opções: `SINGLE PLAYER MODE` e `MULTIPLAYER MODE`. Os textos não aparecem como ASCII simples na ROM.
+
+- `03002958` foi confirmado como índice do cursor: `0` seleciona Single Player e `1` seleciona Multiplayer.
+- A escrita temporária de `1` moveu o cursor visualmente para Multiplayer.
+- A rotina em torno de `08002678` trata somente duas posições: um sentido grava `1`, o outro grava `0`.
+- Após confirmação, o despacho em `080027FC` lê `03002958`: índice `0` segue por `08002818`; índice `1` segue por `0800283E`.
+- Existem casos internos 2 e 3 no despacho maior, mas isso não demonstra opções visíveis adicionais no menu.
+
+Decisão estratégica: preservar as duas opções visíveis, mas transformar ambas em modos do mod de arenas. Single Player será redirecionado primeiro e constitui o MVP. Multiplayer continuará visível e será adaptado em uma etapa posterior; a campanha original não será o destino final de nenhuma das duas opções. Não é necessário criar uma terceira linha `ARENA` no menu para o MVP.
+
+### Save e criação do personagem — estratégia definida
+
+- Manter a tela de seleção/criação de arquivos para que o jogador possa salvar o progresso normalmente.
+- Em um arquivo novo, restringir a escolha de classe/personagem ao Eric.
+- Manter a tela de seleção de cores do Eric.
+- Manter a edição e confirmação do nome.
+- Depois da confirmação final do nome, avançar automaticamente pela introdução da campanha e seguir para a arena. No estado atual, o livro aparece brevemente antes do skip artificial aceito.
+- O teste do fluxo original confirmou a sequência: arquivo -> New Game -> personagem -> confirmação de Eric -> cor -> nome -> confirmação -> introdução do livro.
+- O redirecionamento do carregador já leva ao contexto `1`, sala `7`, após a abertura. O diálogo do chefe ainda precisa ser tratado separadamente.
+- Outras classes/personagens poderão ser adicionados depois do MVP.
 
 ## Atualizações futuras
 
