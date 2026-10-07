@@ -1,0 +1,47 @@
+{
+  "rom_sha256": "53219282ab7c8e0ce648bf5861cfbf611ef8979c0defcf8e060936af06a68cf5",
+  "tests": [
+    {
+      "theme": "menu",
+      "header": "0x9004800",
+      "wave": "0x9310000",
+      "rendered_rms_s16": 1128.62659484495,
+      "loop_wraps": 1,
+      "loop_transitions": [
+        [
+          "0x9402850",
+          "0x93100a0"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "theme": "hub",
+      "header": "0x9004000",
+      "wave": "0x9010000",
+      "rendered_rms_s16": 1003.4012216168827,
+      "loop_wraps": 1,
+      "loop_transitions": [
+        [
+          "0x90f3180",
+          "0x9010030"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "theme": "battle",
+      "header": "0x9004400",
+      "wave": "0x9110000",
+      "rendered_rms_s16": 2523.2211375029565,
+      "loop_wraps": 1,
+      "loop_transitions": [
+        [
+          "0x9202850",
+          "0x91100a0"
+        ]
+      ],
+      "passed": true
+    }
+  ]
+}

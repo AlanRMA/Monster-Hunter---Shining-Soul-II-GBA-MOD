@@ -1,0 +1,206 @@
+{
+  "name": "Monster Hunter Souls Arena",
+  "version": "0.3-hunts",
+  "date": "2026-10-07",
+  "rom": "Monster Hunter Souls Arena - v0.3 Hunts.gba",
+  "sha256": "53219282ab7c8e0ce648bf5861cfbf611ef8979c0defcf8e060936af06a68cf5",
+  "size_bytes": 33554432,
+  "requires_lua": false,
+  "public_patch": {
+    "patch": "Monster-Hunter-Souls-Arena-v0.3-native-audio.bps",
+    "source_sha256": "b31c19d2d25683a0941d5d501912b5f21d4590cd7071fa01882e62aa5227a7c9",
+    "target_sha256": "ad3ae247c81f9d8f6d87399263b90a08b065174121d1a3c7303a8dfbff11d2bd",
+    "local_custom_music_rom_sha256": "53219282ab7c8e0ce648bf5861cfbf611ef8979c0defcf8e060936af06a68cf5",
+    "patch_sha256": "80fea78918fef42c63e30dc10a724b80b054a9c067d0cf0656e132dc3ea0c19c",
+    "patch_bytes": 27375,
+    "target_bytes": 33554432,
+    "music": "Original game music in public patch; custom tracks remain local",
+    "roundtrip_byte_identical": true
+  },
+  "starting_gold_new_character": 1000,
+  "contracts": [
+    {
+      "selection": 1,
+      "item_id": "0xff00",
+      "boss": "Colonel Gobovich",
+      "price": 20,
+      "context": 1,
+      "room": 7,
+      "permitted_deaths": 2
+    },
+    {
+      "selection": 2,
+      "item_id": "0xff01",
+      "boss": "Grove Giant",
+      "price": 40,
+      "context": 2,
+      "room": 9,
+      "permitted_deaths": 2
+    },
+    {
+      "selection": 3,
+      "item_id": "0xff02",
+      "boss": "Wizari",
+      "price": 70,
+      "context": 3,
+      "room": 14,
+      "permitted_deaths": 2
+    },
+    {
+      "selection": 4,
+      "item_id": "0xff03",
+      "boss": "Clione",
+      "price": 100,
+      "context": 4,
+      "room": 12,
+      "permitted_deaths": 2
+    }
+  ],
+  "activation": "Purchase stores scroll; inventory USE consumes it and activates one hunt",
+  "flow": {
+    "new_character": "hub; book opening skipped",
+    "continue": "hub; unused items and gold preserved",
+    "death_1": "hub; heal; one death remains; native boss tasks cleaned",
+    "death_2": "hub; hunt expires; north gate locked",
+    "victory": "hub; hunt ends",
+    "reentry": "native arena reload; full boss HP",
+    "side_exits": "blocked",
+    "south": "native save/title confirmation; two pages then Yes/No",
+    "south_text": "Would you like to return main title? (You are currently in single player mode).",
+    "boss_introductions": "dialogues skipped; original scripts retained",
+    "boss_victory_dialogues": "preserved"
+  },
+  "save": {
+    "unused_scrolls_saved": true,
+    "gold_saved": true,
+    "activated_hunt_saved": false,
+    "legacy_save_import_verified": false
+  },
+  "purchase_feedback": {
+    "native_success_sfx": 95,
+    "native_failure_sfx": 97,
+    "holding_A_repeats": false,
+    "no_charge_when_bag_full_or_poor": true
+  },
+  "title_art": {
+    "source": "forest-source.png",
+    "source_sha256": "8ddd5c4dd727db8082eb2d0ad9cc559acf64a0f26d3063bb46fc5f5af10998bb",
+    "resolution": [
+      240,
+      160
+    ],
+    "palette_banks": 15,
+    "native_font_bank_preserved": 15,
+    "opaque_colors": 155,
+    "unique_tiles": 601,
+    "compressed_map_bytes": 1592,
+    "compressed_map_capacity": 1596,
+    "palette_strategy": "15 local 15-color palettes; RGB555; opaque indices 1..15; no dithering"
+  },
+  "music": {
+    "local_custom_music": true,
+    "public_downloaded_audio_distributed": false,
+    "menu": {
+      "name": "MENU",
+      "url": "https://www.youtube.com/watch?v=Fj4o3q659Z4",
+      "source_sha256": "f023b4f17a0204953ea6a494c2a5b702c36e05f0df1a9cf46e243317bb0fb1f3",
+      "source_clip_seconds": 96,
+      "loop_seconds": 94.49923896499239,
+      "loop_crossfade_seconds": 1.5,
+      "pcm_bytes": 993376,
+      "sample_rate": 10512,
+      "channels": 1,
+      "pcm_bits": 8,
+      "preview_container_bits": 16,
+      "filters": "highpass=f=70,lowpass=f=4300,loudnorm=I=-18:TP=-2:LRA=11",
+      "pcm_sha256": "0626d786472947974ac4f83f8e71318af6832e8f0dda7a4469c8b60ef244c033"
+    },
+    "hub_and_battle": [
+      {
+        "name": "HUB",
+        "source": "hub-5C21ln9supc.wav",
+        "source_sha256": "92ec54fc7f3df86059bdf0543b5445f6fbd723d7550f5833fcc2cf810bc3b263",
+        "source_clip_seconds": 90,
+        "loop_seconds": 88.49923896499239,
+        "loop_crossfade_seconds": 1.5,
+        "pcm_bytes": 930304,
+        "sample_rate": 10512,
+        "channels": 1,
+        "pcm_bits": 8,
+        "filters": "highpass=f=70,lowpass=f=4300,loudnorm=I=-18:TP=-2:LRA=11",
+        "pcm_sha256": "f4a1dcb6f3629d940c327b7936d255047bb2b4f5b76bca647be070b414c97640"
+      },
+      {
+        "name": "BATTLE",
+        "source": "battle-CBgmwMqm3ac.wav",
+        "source_sha256": "a446191a21267587e668f732a6778874a7eb52926957b53eb2815d05d591b34b",
+        "source_clip_seconds": 96,
+        "loop_seconds": 94.49923896499239,
+        "loop_crossfade_seconds": 1.5,
+        "pcm_bytes": 993376,
+        "sample_rate": 10512,
+        "channels": 1,
+        "pcm_bits": 8,
+        "filters": "highpass=f=70,lowpass=f=4300,loudnorm=I=-18:TP=-2:LRA=11",
+        "pcm_sha256": "58d8a74661346d16690028865d1004c74257744c5a45d1a7289a0e984d150623"
+      }
+    ],
+    "native_driver": "M4A/MP2K; signed 8-bit PCM mono 10512 Hz"
+  },
+  "preserved": {
+    "hp_green": true,
+    "sp_yellow": true,
+    "other_npc_stock": true,
+    "original_roms_checked": {
+      "Shining Soul II (USA).gba": "b31c19d2d25683a0941d5d501912b5f21d4590cd7071fa01882e62aa5227a7c9",
+      "Monster Hunter Souls Arena - v0.1 Hub.gba": "b78d2d7b118d34543222164bd067cff574cdaa031476b088855c7534d1cc9303",
+      "Monster Hunter Souls Arena - v0.2 Quests e Musica.gba": "8a96a0f3395d0df494e78060c85b1a3c43053b439c5d78d4bc4a277db341e71b"
+    },
+    "existing_saves_not_modified_by_tests": true
+  },
+  "verification": {
+    "emulator": "mGBA 0.10.5 isolated macOS core",
+    "native_returns_per_variant": 12,
+    "reports": {
+      "v03": [
+        {
+          "report": "validation/v03/hunts.json",
+          "passed_tests": 4
+        },
+        {
+          "report": "validation/v03/regressions.json",
+          "passed_tests": 25
+        },
+        {
+          "report": "validation/v03/audio.json",
+          "passed_tests": 3
+        }
+      ],
+      "v03-public": [
+        {
+          "report": "validation/v03-public/hunts.json",
+          "passed_tests": 4
+        },
+        {
+          "report": "validation/v03-public/regressions.json",
+          "passed_tests": 25
+        }
+      ]
+    },
+    "HP_and_position_writes": "only in isolated diagnostic cores",
+    "patch_roundtrip_identical": true,
+    "independent_BPS_applier": "Floating IPS / Flips; exact target hash matched"
+  },
+  "limits": [
+    "active hunt not persisted",
+    "full manual campaign not tested",
+    "balance not changed",
+    "custom drops/rewards not added",
+    "new bosses not added",
+    "multiplayer unchanged"
+  ],
+  "rebuild_script": "tools/v03/build_v03.py",
+  "runtime_source": "tools/v03/runtime.s",
+  "state_address": "0x0203FF00",
+  "state_reserved_bytes": 256
+}

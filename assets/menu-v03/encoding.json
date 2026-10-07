@@ -1,0 +1,15 @@
+{
+  "source": "forest-source.png",
+  "source_sha256": "8ddd5c4dd727db8082eb2d0ad9cc559acf64a0f26d3063bb46fc5f5af10998bb",
+  "resolution": [
+    240,
+    160
+  ],
+  "palette_banks": 15,
+  "native_font_bank_preserved": 15,
+  "opaque_colors": 155,
+  "unique_tiles": 601,
+  "compressed_map_bytes": 1592,
+  "compressed_map_capacity": 1596,
+  "palette_strategy": "15 local 15-color palettes; RGB555; opaque indices 1..15; no dithering"
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "HUB",
+    "source": "hub-5C21ln9supc.wav",
+    "source_sha256": "92ec54fc7f3df86059bdf0543b5445f6fbd723d7550f5833fcc2cf810bc3b263",
+    "source_clip_seconds": 90,
+    "loop_seconds": 88.49923896499239,
+    "loop_crossfade_seconds": 1.5,
+    "pcm_bytes": 930304,
+    "sample_rate": 10512,
+    "channels": 1,
+    "pcm_bits": 8,
+    "filters": "highpass=f=70,lowpass=f=4300,loudnorm=I=-18:TP=-2:LRA=11",
+    "pcm_sha256": "f4a1dcb6f3629d940c327b7936d255047bb2b4f5b76bca647be070b414c97640"
+  },
+  {
+    "name": "BATTLE",
+    "source": "battle-CBgmwMqm3ac.wav",
+    "source_sha256": "a446191a21267587e668f732a6778874a7eb52926957b53eb2815d05d591b34b",
+    "source_clip_seconds": 96,
+    "loop_seconds": 94.49923896499239,
+    "loop_crossfade_seconds": 1.5,
+    "pcm_bytes": 993376,
+    "sample_rate": 10512,
+    "channels": 1,
+    "pcm_bits": 8,
+    "filters": "highpass=f=70,lowpass=f=4300,loudnorm=I=-18:TP=-2:LRA=11",
+    "pcm_sha256": "58d8a74661346d16690028865d1004c74257744c5a45d1a7289a0e984d150623"
+  }
+]

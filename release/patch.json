@@ -1,0 +1,11 @@
+{
+  "patch": "Monster-Hunter-Souls-Arena-v0.3-native-audio.bps",
+  "source_sha256": "b31c19d2d25683a0941d5d501912b5f21d4590cd7071fa01882e62aa5227a7c9",
+  "target_sha256": "ad3ae247c81f9d8f6d87399263b90a08b065174121d1a3c7303a8dfbff11d2bd",
+  "local_custom_music_rom_sha256": "53219282ab7c8e0ce648bf5861cfbf611ef8979c0defcf8e060936af06a68cf5",
+  "patch_sha256": "80fea78918fef42c63e30dc10a724b80b054a9c067d0cf0656e132dc3ea0c19c",
+  "patch_bytes": 27375,
+  "target_bytes": 33554432,
+  "music": "Original game music in public patch; custom tracks remain local",
+  "roundtrip_byte_identical": true
+}

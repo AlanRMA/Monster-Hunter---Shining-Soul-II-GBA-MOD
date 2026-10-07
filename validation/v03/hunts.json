@@ -1,0 +1,109 @@
+{
+  "rom_sha256": "53219282ab7c8e0ce648bf5861cfbf611ef8979c0defcf8e060936af06a68cf5",
+  "tests": [
+    {
+      "boss": 1,
+      "gold_after_purchase": 980,
+      "intro_without_A_frames": 70,
+      "first_death_return_frames": 326,
+      "second_death_return_frames": 205,
+      "victory_return_frames": 1798,
+      "old_tasks_after_death": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "old_boss_references": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_hp": 540,
+      "reload_hp": 540,
+      "purchase_does_not_activate": true,
+      "two_deaths_expire": true,
+      "passed": true
+    },
+    {
+      "boss": 2,
+      "gold_after_purchase": 960,
+      "intro_without_A_frames": 71,
+      "first_death_return_frames": 326,
+      "second_death_return_frames": 205,
+      "victory_return_frames": 1474,
+      "old_tasks_after_death": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "old_boss_references": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_hp": 1050,
+      "reload_hp": 1050,
+      "purchase_does_not_activate": true,
+      "two_deaths_expire": true,
+      "passed": true
+    },
+    {
+      "boss": 3,
+      "gold_after_purchase": 930,
+      "intro_without_A_frames": 70,
+      "first_death_return_frames": 326,
+      "second_death_return_frames": 205,
+      "victory_return_frames": 1796,
+      "old_tasks_after_death": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "old_boss_references": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_hp": 1200,
+      "reload_hp": 1200,
+      "purchase_does_not_activate": true,
+      "two_deaths_expire": true,
+      "passed": true
+    },
+    {
+      "boss": 4,
+      "gold_after_purchase": 900,
+      "intro_without_A_frames": 364,
+      "first_death_return_frames": 326,
+      "second_death_return_frames": 205,
+      "victory_return_frames": 2021,
+      "old_tasks_after_death": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "old_boss_references": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_hp": 2040,
+      "reload_hp": 2040,
+      "purchase_does_not_activate": true,
+      "two_deaths_expire": true,
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "MENU",
+  "url": "https://www.youtube.com/watch?v=Fj4o3q659Z4",
+  "source_sha256": "f023b4f17a0204953ea6a494c2a5b702c36e05f0df1a9cf46e243317bb0fb1f3",
+  "source_clip_seconds": 96,
+  "loop_seconds": 94.49923896499239,
+  "loop_crossfade_seconds": 1.5,
+  "pcm_bytes": 993376,
+  "sample_rate": 10512,
+  "channels": 1,
+  "pcm_bits": 8,
+  "preview_container_bits": 16,
+  "filters": "highpass=f=70,lowpass=f=4300,loudnorm=I=-18:TP=-2:LRA=11",
+  "pcm_sha256": "0626d786472947974ac4f83f8e71318af6832e8f0dda7a4469c8b60ef244c033"
+}
